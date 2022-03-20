@@ -14,5 +14,13 @@
   "license": "ISC",
   "devDependencies": {
     "concurrently": "^5.1.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DYoshizawa079/challenge21-book-searchA48.git"
+  },
+  "bugs": {
+    "url": "https://github.com/DYoshizawa079/challenge21-book-searchA48/issues"
+  },
+  "homepage": "https://github.com/DYoshizawa079/challenge21-book-searchA48#readme"
 }
