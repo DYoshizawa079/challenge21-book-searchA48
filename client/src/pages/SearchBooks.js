@@ -2,8 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Jumbotron, Container, Col, Form, Button, Card, CardColumns } from 'react-bootstrap';
 
 import Auth from '../utils/auth';
-import { saveBook, searchGoogleBooks } from '../utils/API';
+import { searchGoogleBooks } from '../utils/API';
 import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
+
+import { useMutation } from '@apollo/client';
+import { SAVE_BOOK } from '../utils/mutations';
+
+// REMOVE BEFORE PRODUCTION
+//import { LOGIN_USER } from '../utils/mutations';
 
 const SearchBooks = () => {
   // create state for holding returned google api data
@@ -14,11 +20,16 @@ const SearchBooks = () => {
   // create state to hold saved bookId values
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
 
+  const [savebook] = useMutation(SAVE_BOOK);
+
+  // REMOVE BEFORE PRODUCTION
+  //const [login, { error }] = useMutation(LOGIN_USER);
+
   // set up useEffect hook to save `savedBookIds` list to localStorage on component unmount
   // learn more here: https://reactjs.org/docs/hooks-effect.html#effects-with-cleanup
   useEffect(() => {
     return () => saveBookIds(savedBookIds);
-  });
+  }); 
 
   // create method to search for books and set state on form submit
   const handleFormSubmit = async (event) => {
@@ -56,21 +67,44 @@ const SearchBooks = () => {
   const handleSaveBook = async (bookId) => {
     // find the book in `searchedBooks` state by the matching id
     const bookToSave = searchedBooks.find((book) => book.bookId === bookId);
+    console.log("handleSaveBook fired");
 
     // get token
     const token = Auth.loggedIn() ? Auth.getToken() : null;
-
+    console.log("Token", token);
     if (!token) {
       return false;
     }
 
     try {
-      const response = await saveBook(bookToSave, token);
+      console.log("bookToSave", bookToSave);
+      //const response = await addbook(bookToSave, token);
+      const { data } = await savebook({
+        variables: { input: { ...bookToSave, token } },
+      });
+      console.log("After savebook");
 
-      if (!response.ok) {
+      // This code for login works w/o the 400 error...
+      /* const { data } = await login({
+        variables: { ...{ email: 'test@test.com', password: '12345' } },
+      }); */
+
+      // Sample book object
+      /* {
+        "bookId": "xm5nGgAACAAJ",
+        "authors": [
+            "Felicity Brooks"
+        ],
+        "title": "Find the Duck",
+        "description": "Illustrations and simple text encourage young readers to find the toy duck hiding in various places around the bathroom. On board pages.",
+        "image": "http://books.google.com/books/content?id=xm5nGgAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+      } */
+
+      console.log(data);
+      if (!data) {
         throw new Error('something went wrong!');
       }
-
+      
       // if book successfully saves to user's account, save book id to state
       setSavedBookIds([...savedBookIds, bookToSave.bookId]);
     } catch (err) {

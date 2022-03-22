@@ -33,7 +33,18 @@ const resolvers = {
             }
             const token = signToken(user);
             return { token, user };
-        }
+        },
+        saveBook: async (parent, { input }, { user }) => {
+            if (user) {
+              const userData = User.findByIdAndUpdate(
+                user._id,
+                { $push: { savedBooks: input } },
+                { new: true, runValidators: true }
+              );
+              return userData;
+            }
+            throw new AuthenticationError("You need to be logged in to save a book");
+        },
     }
 }
 
