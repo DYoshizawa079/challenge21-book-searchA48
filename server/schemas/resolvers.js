@@ -25,7 +25,6 @@ const resolvers = {
             return { token, user };
         },
         login: async (parent, { email, password }) => {
-            console.log("login email: ", email);
             const user = await User.findOne({ email });
             // If user is not found
             if (!user) {
@@ -41,7 +40,6 @@ const resolvers = {
             return { token, user };
         },
         saveBook: async (parent, { input }, context) => {
-            console.log(input);
             if (context.user) {
               const userData = User.findByIdAndUpdate(
                 context.user._id,
@@ -54,7 +52,6 @@ const resolvers = {
         },
         saveBookLong: async (parent, { bookId, authors, title, description, image }, context) => {
             if (context.user) {
-              console.log(bookId, authors, title, description, image);
               let bookData = {
                   "bookId": bookId,
                   "authors": authors,

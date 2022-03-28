@@ -10,52 +10,29 @@ import { GET_ME } from '../utils/queries';
 
 const SavedBooks = () => {
   const [userData, setUserData] = useState({});
-  
-  //const { data: userDataB } = useQuery(GET_ME);
-  //console.log("userDataB - 1: ", userDataB);
 
   const { data: userDataB } = useQuery(GET_ME);
-  console.log("userDataB: ", userDataB);
-  /* const fetchUserData = async () => {
-    const { data: userDataB } = await useQuery(GET_ME);
-    console.log("userDataB: ", userDataB);
-    return userDataB;
-  }
-  let userDataC = fetchUserData; */
   
   // use this to determine if `useEffect()` hook needs to run again
   const userDataLength = Object.keys(userData).length;
-  console.log("userDataLength: ",userDataLength);
-
-  //setUserData(userDataB);
 
   useEffect((userDataC) => {
     const getUserData = async () => {
 
-      console.log("getUserData fires");
-      console.log("userDataC: ", userDataC);
-
       try {
-        console.log("getUserData's TRY statement fires");
         const token = Auth.loggedIn() ? Auth.getToken() : null;
-        //console.log("token: ", token);
 
         if (!token) {
           return false;
         }
 
-        //const response = await getMe(token);
-        //const { data: userDataB } = useQuery(GET_ME);
-        //console.log("userDataB - 2: ", userDataB);
         const response = userDataC;
-        
 
         if (!response.ok) {
           throw new Error('something went wrong!');
         }
 
         const user = await response.json();
-        //const user = userDataB;
         
         setUserData(user);
       } catch (err) {
