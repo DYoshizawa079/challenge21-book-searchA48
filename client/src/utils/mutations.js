@@ -43,3 +43,18 @@ export const SAVE_BOOK = gql`
     }
   }
 `;
+
+export const SAVE_BOOK_LONG = gql`
+mutation saveBookLong($bookId: String!, $authors: [String], $title: String!, $description: String, $image: String) {
+  saveBookLong(bookId: $bookId , authors: $authors , title: $title, description: $description, image: $image ) {
+    _id
+    bookCount
+    email
+    savedBooks {
+      title
+      bookId
+    }
+    username
+  }
+}
+`;

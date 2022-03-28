@@ -6,7 +6,7 @@ import { searchGoogleBooks } from '../utils/API';
 import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
 
 import { useMutation } from '@apollo/client';
-import { SAVE_BOOK } from '../utils/mutations';
+import { SAVE_BOOK_LONG } from '../utils/mutations';
 
 // REMOVE BEFORE PRODUCTION
 //import { LOGIN_USER } from '../utils/mutations';
@@ -20,7 +20,7 @@ const SearchBooks = () => {
   // create state to hold saved bookId values
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
 
-  const [savebook] = useMutation(SAVE_BOOK);
+  const [savebook, {error}] = useMutation(SAVE_BOOK_LONG);
 
   // REMOVE BEFORE PRODUCTION
   //const [login, { error }] = useMutation(LOGIN_USER);
@@ -66,7 +66,7 @@ const SearchBooks = () => {
   // create function to handle saving a book to our database
   const handleSaveBook = async (bookId) => {
     // find the book in `searchedBooks` state by the matching id
-    const bookToSave = searchedBooks.find((book) => book.bookId === bookId);
+    let bookToSave = searchedBooks.find((book) => book.bookId === bookId);
     console.log("handleSaveBook fired");
 
     // get token
@@ -79,10 +79,17 @@ const SearchBooks = () => {
     try {
       console.log("bookToSave", bookToSave);
       //const response = await addbook(bookToSave, token);
-      const { data } = await savebook({
-        variables: { input: { ...bookToSave, token } },
+      const { data, loading, error } = await savebook({
+        variables: { 
+          //bookToSave 
+          "bookId": bookToSave.bookId,
+          "authors": bookToSave.authors,
+          "title": bookToSave.title,
+          "description": bookToSave.description,
+          "image": bookToSave.image
+        },
       });
-      console.log("After savebook");
+      console.log(error);
 
       // This code for login works w/o the 400 error...
       /* const { data } = await login({
